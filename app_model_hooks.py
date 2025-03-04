@@ -4,7 +4,7 @@ import subprocess
 
 import numpy as np
 import pandas as pd
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from sklearn.linear_model import Lasso
 from sklearn.metrics import mean_absolute_percentage_error, mean_squared_error
 from sklearn.model_selection import train_test_split
@@ -19,8 +19,8 @@ app.config["DEBUG"] = True
 # Route to endpoint /
 @app.route("/", methods=["GET"])
 def hello():
-    return "Welcome to the API that predicts revenues from advertising!"
-    # return "The webhook is working! I'm so happy! :) "
+    # return "Welcome to the API that predicts revenues from advertising!"
+    return "The webhook is working! I'm so happy! :) "
 
 
 # Route to endpoint /api/v1/predict
@@ -78,6 +78,7 @@ def retrain():
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
+    print("DEBUG: Webhook received!")
     # route to the repository where the git pull will be applied
     # path_repo = "/route/to/your/repository/on/PythonAnywhere"
     # servidor_web = "/route/to/the/WSGI/file/for/configuration"
@@ -88,12 +89,15 @@ def webhook():
     # It checks if the POST request has JSON data
     if request.is_json:
         payload = request.json
+        print(f"DEBUG: Payload received: {payload}")
         # It verifies that the payload holds information about the repository
 
         if "repository" in payload:
             # It extracts the repository name and the URL to clone it
             repo_name = payload["repository"]["name"]
             clone_url = payload["repository"]["clone_url"]
+            print(f"DEBUG: Repository name: {repo_name}")
+            return jsonify ({ "message": "The webhook is working! I'm so happy! :)" })
 
             # It changes to the repository directory
             try:
